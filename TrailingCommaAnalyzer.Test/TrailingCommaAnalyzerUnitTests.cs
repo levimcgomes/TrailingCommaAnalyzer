@@ -1,28 +1,30 @@
 ﻿using System.Threading.Tasks;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using VerifyCS = TrailingCommaAnalyzer.Test.CSharpCodeFixVerifier<
-	TrailingCommaAnalyzer.TrailingCommaAnalyzerAnalyzer,
-	TrailingCommaAnalyzer.TrailingCommaAnalyzerCodeFixProvider>;
+    TrailingCommaAnalyzer.TrailingCommaAnalyzerAnalyzer,
+    TrailingCommaAnalyzer.TrailingCommaAnalyzerCodeFixProvider
+>;
 
 namespace TrailingCommaAnalyzer.Test
 {
-	[TestClass]
-	public class TrailingCommaAnalyzerUnitTest
-	{
-		//No diagnostics expected to show up
-		[TestMethod]
-		public async Task TestMethod1() {
-			var test = @"";
+    [TestClass]
+    public class TrailingCommaAnalyzerUnitTest
+    {
+        //No diagnostics expected to show up
+        [TestMethod]
+        public async Task TestMethod1()
+        {
+            var test = @"";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
-		}
+            await VerifyCS.VerifyAnalyzerAsync(test);
+        }
 
-		//Diagnostic and CodeFix both triggered and checked for
-		[TestMethod]
-		public async Task TestMethod2() {
-			var test = @"
+        //Diagnostic and CodeFix both triggered and checked for
+        [TestMethod]
+        public async Task TestMethod2()
+        {
+            var test =
+                @"
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -37,7 +39,8 @@ namespace TrailingCommaAnalyzer.Test
         }
     }";
 
-			var fixtest = @"
+            var fixtest =
+                @"
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -52,8 +55,11 @@ namespace TrailingCommaAnalyzer.Test
         }
     }";
 
-			var expected = VerifyCS.Diagnostic("TrailingCommaAnalyzer").WithLocation(0).WithArguments("TypeName");
-			await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-		}
-	}
+            var expected = VerifyCS
+                .Diagnostic("TrailingCommaAnalyzer")
+                .WithLocation(0)
+                .WithArguments("TypeName");
+            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        }
+    }
 }
