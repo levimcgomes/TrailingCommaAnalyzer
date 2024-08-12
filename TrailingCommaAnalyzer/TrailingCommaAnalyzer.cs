@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace TrailingCommaAnalyzer
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class TrailingCommaAnalyzerAnalyzer : DiagnosticAnalyzer
+    public class TrailingCommaAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "TrailingCommaAnalyzer";
 

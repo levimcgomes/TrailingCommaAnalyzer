@@ -23,7 +23,7 @@ namespace TrailingCommaAnalyzer
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
-            get { return ImmutableArray.Create(TrailingCommaAnalyzerAnalyzer.DiagnosticId); }
+            get { return ImmutableArray.Create(TrailingCommaAnalyzer.DiagnosticId); }
         }
 
         public sealed override FixAllProvider GetFixAllProvider()

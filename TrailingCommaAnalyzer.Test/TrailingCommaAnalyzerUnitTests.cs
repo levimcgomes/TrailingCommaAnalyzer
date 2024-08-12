@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = TrailingCommaAnalyzer.Test.CSharpCodeFixVerifier<
-    TrailingCommaAnalyzer.TrailingCommaAnalyzerAnalyzer,
+    TrailingCommaAnalyzer.TrailingCommaAnalyzer,
     TrailingCommaAnalyzer.TrailingCommaAnalyzerCodeFixProvider
 >;
 
