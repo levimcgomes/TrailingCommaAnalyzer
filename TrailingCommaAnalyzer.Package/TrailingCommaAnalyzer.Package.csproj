@@ -1,4 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" InitialTargets="SetVersion">
+
+<Import Project="../Version.targets" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,22 +11,27 @@
 
   <PropertyGroup>
     <PackageId>TrailingCommaAnalyzer</PackageId>
-    <PackageVersion>1.0.0.0</PackageVersion>
     <Authors>Levi Gomes</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/levimcgomes/TrailingCommaAnalyzer?tab=GPL-3.0-1-ov-file#readme</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/levimcgomes/TrailingCommaAnalyzer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/levimcgomes/TrailingCommaAnalyzer</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Description>TrailingCommaAnalyzer</Description>
+    <Description>A C# code analyser and fix to enforce trailing commas.</Description>
     <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
-    <Copyright>Copyright</Copyright>
+    <Copyright>Copyright (C) 2024 Levi Gomes</Copyright>
     <PackageTags>TrailingCommaAnalyzer, analyzers</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
 
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GitInfo" Version="3.3.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TrailingCommaAnalyzer.CodeFixes\TrailingCommaAnalyzer.CodeFixes.csproj" />
