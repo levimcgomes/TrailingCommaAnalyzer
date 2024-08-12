@@ -7,12 +7,13 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <EnablePackageValidation>true</EnablePackageValidation>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>TrailingCommaAnalyzer</PackageId>
+    <PackageId>levimcgomes.TrailingCommaAnalyzer</PackageId>
     <Authors>Levi Gomes</Authors>
-    <PackageLicenseUrl>https://github.com/levimcgomes/TrailingCommaAnalyzer?tab=GPL-3.0-1-ov-file#readme</PackageLicenseUrl>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/levimcgomes/TrailingCommaAnalyzer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/levimcgomes/TrailingCommaAnalyzer</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
