@@ -20,5 +20,5 @@ runs:
       shell: bash
       run: |
         for pkg in ${{ inputs.output-dir }}/*.nupkg; do
-          meziantou.validate-nuget-package $pkg
+          dotnet meziantou.validate-nuget-package $pkg
         done
