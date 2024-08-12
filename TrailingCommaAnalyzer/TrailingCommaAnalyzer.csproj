@@ -8,6 +8,10 @@
     <PackageId>*$(MSBuildProjectFile)*</PackageId>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
