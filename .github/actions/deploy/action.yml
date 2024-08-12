@@ -1,0 +1,19 @@
+name: Deploy package
+description: Deploys a package to the NuGet registry
+inputs:
+  output-dir:
+    description: Directory for generated .nupkg files
+    required: true
+  nuget-key:
+    description: API key for the NuGet registry
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Publish
+      shell: bash
+      run: |
+        for pkg in ${{ inputs.output-dir }}; do
+          dotnet nuget push $pkg --api-key "${{ inputs.nuget-key }}"  --source https://api.nuget.org/v3/index.json --skip-duplicate
+        done

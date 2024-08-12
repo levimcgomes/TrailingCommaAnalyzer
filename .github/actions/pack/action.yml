@@ -1,0 +1,24 @@
+name: Create package
+description: Creates and validates a NuGet package
+inputs:
+  output-dir:
+    description: Directory for generated .nupkg files
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Create package
+      shell: bash
+      run: dotnet pack -c CI -o ${{ inputs.output-dir }}
+
+    - name: Install nuget validator
+      shell: bash
+      run: dotnet tool update Meziantou.Framework.NuGetPackageValidation.Tool --global
+
+    - name: Validate package
+      shell: bash
+      run: |
+        for pkg in ${{ inputs.output-dir }}/*.nupkg; do
+          meziantou.validate-nuget-package $pkg
+        done

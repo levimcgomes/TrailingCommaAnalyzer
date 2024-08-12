@@ -1,0 +1,17 @@
+name: Skip duplicates
+description: Skip unnecessary, duplicate workflow runs
+
+outputs:
+  should-skip:
+    description: Should the workflow be skipped?
+    value: ${{ steps.skip.outputs.should_skip }}
+
+runs:
+  using: composite
+  steps:
+    - id: skip
+      uses: fkirc/skip-duplicate-actions@v5
+      with:
+        cancel_others: "true"
+        skip_after_successful_duplicate: "true"
+        concurrent_skipping: "same_content_newer"

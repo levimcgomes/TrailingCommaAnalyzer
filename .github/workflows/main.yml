@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.gitignore"
+      - "**/*.gitattributes"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.gitignore"
+      - "**/*.gitattributes"
+  workflow_dispatch:
+
+jobs:
+  skip-check:
+    if: contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+    runs-on: ubuntu-latest
+    outputs:
+      should-skip: ${{ steps.skip.outputs.should-skip }}
+    steps:
+      - id: skip
+        uses: ./.github/actions/skip
+
+  build-test:
+    needs: skip-check
+    if: needs.skip-check.outputs.should-skip != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/test
+
+  check:
+    needs: skip-check
+    if: needs.skip-check.outputs.should-skip != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/check

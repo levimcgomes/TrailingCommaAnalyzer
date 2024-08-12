@@ -1,0 +1,31 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
+
+jobs:
+  skip-check:
+    if: contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+    runs-on: ubuntu-latest
+    outputs:
+      should-skip: ${{ steps.skip.outputs.should-skip }}
+    steps:
+      - id: skip
+        uses: ./.github/actions/skip
+
+  deploy:
+    needs: skip-check
+    if: needs.skip-check.outputs.should-skip != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/pack
+        with:
+          output-dir: ${{ github.workspace }}/nuget
+      - uses: ./.github/actions/test
+      - uses: ./.github/actions/deploy
+        with:
+          output-dir: ${{ github.workspace }}/nuget
+          nuget-key: ${{ secrets.NUGET_APIKEY }}

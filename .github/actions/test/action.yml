@@ -1,0 +1,9 @@
+name: Run unit tests
+description: Runs unit tests
+
+runs:
+  using: composite
+  steps:
+    - name: test
+      shell: bash
+      run: dotnet test

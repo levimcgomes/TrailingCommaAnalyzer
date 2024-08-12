@@ -1,0 +1,38 @@
+name: "Build"
+description: Build the solution
+
+runs:
+  using: composite
+  steps:
+    - name: Set env variables
+      shell: bash
+      run: |
+        echo "DOTNET_CLI_TELEMETRY_OPTOUT=1" >> "${GITHUB_OUTPUT}"
+        echo "DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1" >> "${GITHUB_OUTPUT}"
+        echo "DOTNET_NOLOGO=true" >> "${GITHUB_OUTPUT}"
+        echo "DOTNET_GENERATE_ASPNET_CERTIFICATE=false" >> "${GITHUB_OUTPUT}"
+        echo "DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=false" >> "${GITHUB_OUTPUT}"
+        echo "DOTNET_MULTILEVEL_LOOKUP=0" >> "${GITHUB_OUTPUT}"
+        echo "PACKAGE_PROJECT=TrailingCommaAnalyzer.Package\" >> "${GITHUB_OUTPUT}"
+        echo "VSIX_PROJECT=TrailingCommaAnalyzer.Vsix\" >> "${GITHUB_OUTPUT}"
+
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 3.1.x
+        cache: true
+
+    - name: Build
+      shell: bash
+      run: |
+        dotnet build -c CI
+
+    # upload artifacts
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: release-pacakges
+        path: |
+          ${{ github.workspace }}/*/bin/Release/*.nupkg
