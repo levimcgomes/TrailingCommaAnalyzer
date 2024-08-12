@@ -7,6 +7,12 @@
       "commands": [
         "dotnet-csharpier"
       ]
+    },
+    "meziantou.framework.nugetpackagevalidation.tool": {
+      "version": "1.0.16",
+      "commands": [
+        "meziantou.validate-nuget-package"
+      ]
     }
   }
 }
