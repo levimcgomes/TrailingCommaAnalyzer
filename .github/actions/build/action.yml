@@ -16,8 +16,6 @@ runs:
         echo "PACKAGE_PROJECT=TrailingCommaAnalyzer.Package\" >> "${GITHUB_OUTPUT}"
         echo "VSIX_PROJECT=TrailingCommaAnalyzer.Vsix\" >> "${GITHUB_OUTPUT}"
 
-    - uses: actions/checkout@v2
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:

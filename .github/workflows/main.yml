@@ -24,6 +24,7 @@ jobs:
     outputs:
       should-skip: ${{ steps.skip.outputs.should-skip }}
     steps:
+      - uses: actions/checkout@v4
       - id: skip
         uses: ./.github/actions/skip
 
@@ -32,6 +33,7 @@ jobs:
     if: needs.skip-check.outputs.should-skip != 'true'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/build
       - uses: ./.github/actions/test
 
@@ -40,4 +42,5 @@ jobs:
     if: needs.skip-check.outputs.should-skip != 'true'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/check
