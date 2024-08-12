@@ -58,28 +58,44 @@ namespace TrailingCommaAnalyzer
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
-            // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+            context.RegisterSyntaxNodeAction(
+                AnalyzeObjectInitializerExpression,
+                SyntaxKind.ObjectInitializerExpression
+            );
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private void AnalyzeObjectInitializerExpression(SyntaxNodeAnalysisContext context)
         {
-            // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-
-            // Find just those named type symbols with names containing lowercase letters.
-            if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
+            var objectInitializerSyntax = (InitializerExpressionSyntax)context.Node;
+            var lastExpression = objectInitializerSyntax.Expressions.Last();
+            // If the last item doesn't have trailing newline trivia,
+            // then the initializer is a single-liner, which doesn't
+            // need a trailing comma
+            if (
+                !lastExpression.HasTrailingTrivia
+                || !lastExpression
+                    .GetTrailingTrivia()
+                    .Any(t => t.IsKind(SyntaxKind.EndOfLineTrivia))
+            )
             {
-                // For all such symbols, produce a diagnostic.
-                var diagnostic = Diagnostic.Create(
-                    Rule,
-                    namedTypeSymbol.Locations[0],
-                    namedTypeSymbol.Name
-                );
-
-                context.ReportDiagnostic(diagnostic);
+                return;
             }
+
+            // The last token is always the closing brace, so check
+            // if the previous one is a comma or something else
+            if (
+                objectInitializerSyntax
+                    .ChildTokens()
+                    .Last()
+                    .GetPreviousToken()
+                    .IsKind(SyntaxKind.CommaToken)
+            )
+            {
+                return;
+            }
+
+            // There should be a trailing comma, so create a diagnostic
+            context.ReportDiagnostic(Diagnostic.Create(Rule, lastExpression.GetLocation()));
         }
     }
 }
