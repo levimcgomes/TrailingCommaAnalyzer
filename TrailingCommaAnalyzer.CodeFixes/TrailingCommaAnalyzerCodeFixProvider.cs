@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿// Allow undocumented code
+#pragma warning disable CS1591
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
