@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = TrailingCommaAnalyzer.Test.CSharpCodeFixVerifier<
     TrailingCommaAnalyzer.TrailingCommaAnalyzer,
@@ -10,56 +11,50 @@ namespace TrailingCommaAnalyzer.Test
     [TestClass]
     public class TrailingCommaAnalyzerUnitTest
     {
-        //No diagnostics expected to show up
-        [TestMethod]
-        public async Task TestMethod1()
+        private static readonly string TestPrelude =
+            @"namespace TrailingCommaAnalyzerTest
+{
+    internal class Program
+    {
+        struct MissingACommaStruct
         {
-            var test = @"";
-
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            public int A;
+            public int B;
+            public int C;
         }
 
-        //Diagnostic and CodeFix both triggered and checked for
+        static void Main(string[] args)
+        {";
+        private static readonly string TestClosing =
+            @"        }
+    }
+}
+";
+
         [TestMethod]
-        public async Task TestMethod2()
+        public async Task DiagnosticObjectInitializerExpression()
         {
             var test =
-                @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
-    {
-        class {|#0:TypeName|}
-        {   
+                TestPrelude
+                + @"var missingACommaStruct = new MissingACommaStruct
+{
+    A = 10,
+    B = 20,
+    C = 30
+};"
+                + TestClosing;
+            var expected = VerifyCS.Diagnostic("TCA001").WithSpan(17, 5, 17, 11);
+            await VerifyCS.VerifyAnalyzerAsync(test, expected);
         }
-    }";
 
-            var fixtest =
-                @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
-    {
-        class TYPENAME
-        {   
-        }
-    }";
-
-            var expected = VerifyCS
-                .Diagnostic("TrailingCommaAnalyzer")
-                .WithLocation(0)
-                .WithArguments("TypeName");
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        [TestMethod]
+        public async Task NoDiagnosticObjectInitializerExpression()
+        {
+            var test =
+                TestPrelude
+                + @"var notMissingACommaStruct = new MissingACommaStruct { A = 10, B = 20 };"
+                + TestClosing;
+            await VerifyCS.VerifyAnalyzerAsync(test);
         }
     }
 }
