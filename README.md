@@ -10,16 +10,12 @@ This is a C# code analyzer, based on the .NET Compiler SDK, which enforces the u
 
 ## Features
 
-### Implemented
-
-### Planned
-
 Report missing trailing commas in:
 
-- object initializers
-- array initializers
-- collection initializers
-- enums
-- switch expressions
+- [] object initializers
+- [] array initializers
+- [] collection initializers
+- [] enums
+- [] switch expressions
 
 Fix missing commas.
