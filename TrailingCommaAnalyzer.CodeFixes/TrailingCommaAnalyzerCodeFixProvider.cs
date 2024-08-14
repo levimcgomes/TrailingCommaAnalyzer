@@ -23,6 +23,8 @@ namespace TrailingCommaAnalyzer
     ]
     public class TrailingCommaAnalyzerCodeFixProvider : CodeFixProvider
     {
+        private static readonly string Title = "Add trailing comma";
+
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
             get { return ImmutableArray.Create(TrailingCommaAnalyzer.DiagnosticId); }
@@ -53,10 +55,10 @@ namespace TrailingCommaAnalyzer
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: CodeFixResources.CodeFixTitle,
+                    title: Title,
                     createChangedSolution: c =>
                         MakeUppercaseAsync(context.Document, declaration, c),
-                    equivalenceKey: nameof(CodeFixResources.CodeFixTitle)
+                    equivalenceKey: Title
                 ),
                 diagnostic
             );
