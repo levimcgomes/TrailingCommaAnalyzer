@@ -30,11 +30,10 @@ namespace TrailingCommaAnalyzer
             get { return ImmutableArray.Create(TrailingCommaAnalyzer.DiagnosticId); }
         }
 
-        public sealed override FixAllProvider GetFixAllProvider()
-        {
-            // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
-            return WellKnownFixAllProviders.BatchFixer;
-        }
+        // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md
+        // for more information on Fix All Providers
+        public sealed override FixAllProvider GetFixAllProvider() =>
+            WellKnownFixAllProviders.BatchFixer;
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
