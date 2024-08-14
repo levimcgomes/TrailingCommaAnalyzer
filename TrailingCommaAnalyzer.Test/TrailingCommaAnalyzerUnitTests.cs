@@ -56,5 +56,30 @@ namespace TrailingCommaAnalyzer.Test
                 + TestClosing;
             await VerifyCS.VerifyAnalyzerAsync(test);
         }
+
+        [TestMethod]
+        public async Task FixObjectInitializerExpression()
+        {
+            var test =
+                TestPrelude
+                + @"var missingACommaStruct = new MissingACommaStruct
+{
+    A = 10,
+    B = 20,
+    C = 30
+};"
+                + TestClosing;
+            var expected = VerifyCS.Diagnostic("TCA001").WithSpan(17, 5, 17, 11);
+            var correct =
+                TestPrelude
+                + @"var missingACommaStruct = new MissingACommaStruct
+{
+    A = 10,
+    B = 20,
+    C = 30,
+};"
+                + TestClosing;
+            await VerifyCS.VerifyCodeFixAsync(test, expected, correct);
+        }
     }
 }
