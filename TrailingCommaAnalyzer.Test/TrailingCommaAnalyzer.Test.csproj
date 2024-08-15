@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -10,6 +10,19 @@
   <ItemGroup>
     <Content Include="$(ProjectDir)\Tests\**\*.cs" CopyToOutputDirectory="Always"/>
   </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="Tests\ObjectInitialzerExpression\Diagnostic.cs" />
+    <Compile Remove="Tests\ObjectInitialzerExpression\Expected.cs" />
+    <Compile Remove="Tests\ObjectInitialzerExpression\NoDiagnostic.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Tests\ObjectInitialzerExpression\Diagnostic.cs" />
+    <None Include="Tests\ObjectInitialzerExpression\Expected.cs" />
+    <None Include="Tests\ObjectInitialzerExpression\NoDiagnostic.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="GitInfo" Version="3.3.5">
       <PrivateAssets>all</PrivateAssets>
