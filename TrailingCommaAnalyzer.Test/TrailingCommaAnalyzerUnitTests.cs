@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Text;
@@ -125,6 +126,32 @@ namespace TrailingCommaAnalyzer.Test
             if (testFileSet.WithDiagnostic.Length == 0 || testFileSet.Expected.Length == 0)
                 throw new ArgumentException("Missing test data", nameof(testFileSet));
             await VerifyCS.VerifyCodeFixAsync(testFileSet.WithDiagnostic, testFileSet.Expected);
+        }
+
+        [TestMethod]
+        public void ThrowDebugInfo()
+        {
+            bool testsDirExists = Directory.Exists(@"Tests");
+            var testDirs = Directory.EnumerateDirectories(@"Tests");
+            string testDirsPrint = testDirs.Aggregate(
+                "Tests subdirs:",
+                (acc, dir) => acc + "\n\t" + dir
+            );
+            string tests = "Tests:\n";
+            foreach (var testDir in testDirs)
+            {
+                tests +=
+                    $"\tIn {testDir}:\n\t\t"
+                    + File.Exists(testDir + @"\Diagnostic.cs")
+                    + '\t'
+                    + File.Exists(testDir + @"\NoDiagnostic.cs")
+                    + '\t'
+                    + File.Exists(testDir + @"\Expected.cs")
+                    + '\n';
+            }
+            throw new Exception(
+                $"{nameof(testsDirExists)} = {testsDirExists}\n" + $"{testDirsPrint}\n" + $"{tests}"
+            );
         }
     }
 }
