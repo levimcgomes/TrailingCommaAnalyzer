@@ -35,10 +35,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/build
-      - uses: actions/upload-artifact@v4
-        with:
-          name: "Tests bin folder"
-          path: "TrailingCommaAnalyzer.Test/bin/"
       - uses: ./.github/actions/test
 
   check:
