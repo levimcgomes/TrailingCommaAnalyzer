@@ -1,5 +1,6 @@
 ﻿// Allow undocumented code
 #pragma warning disable CS1591
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -42,15 +43,11 @@ namespace TrailingCommaAnalyzer
                 .Document.GetSyntaxRootAsync(context.CancellationToken)
                 .ConfigureAwait(false);
 
-            // TODO: Replace the following code with your own analysis, generating a CodeAction for each fix to suggest
             var diagnostic = context.Diagnostics.First();
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            // Find the initializer expression identified by the diagnostic.
-            var declaration = root.FindToken(diagnosticSpan.Start)
-                .Parent.AncestorsAndSelf()
-                .OfType<InitializerExpressionSyntax>()
-                .First();
+            // Find the node which contains the item identified by the diagnostic.
+            var declaration = root.FindNode(diagnosticSpan).Parent;
 
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
@@ -66,12 +63,12 @@ namespace TrailingCommaAnalyzer
 
         private async Task<Document> AddTrailingCommaAsync(
             Document document,
-            InitializerExpressionSyntax initializerExpression,
+            SyntaxNode node,
             CancellationToken cancellationToken
         )
         {
             // Get the list with separators
-            var listWithSeparators = initializerExpression.Expressions.GetWithSeparators();
+            var listWithSeparators = TrailingCommaAnalyzer.GetSeparated(node);
             // Get the last item
             var lastItem = listWithSeparators.Last();
             // Create a comma token with the correct trivia
@@ -86,14 +83,37 @@ namespace TrailingCommaAnalyzer
                 ImmutableArray.Create(lastItem.WithTrailingTrivia(), commaToken)
             );
             // Recreate an initializer expression with the new list
-            var newInitializerExpression = initializerExpression
-                .WithExpressions(SyntaxFactory.SeparatedList<ExpressionSyntax>(listWithSeparators))
+            var newInitializerExpression = WithUpdatedChildren(node, listWithSeparators)
                 .WithAdditionalAnnotations(Formatter.Annotation);
             // Replace it with a document editor
             var documentEditor = await DocumentEditor.CreateAsync(document, cancellationToken);
-            documentEditor.ReplaceNode(initializerExpression, newInitializerExpression);
+            documentEditor.ReplaceNode(node, newInitializerExpression);
             // Return the document
             return documentEditor.GetChangedDocument();
+        }
+
+        private static SyntaxNode WithUpdatedChildren(
+            SyntaxNode node,
+            SyntaxNodeOrTokenList listWithSeparators
+        )
+        {
+            return node switch
+            {
+                InitializerExpressionSyntax initializerExpression
+                    => initializerExpression.WithExpressions(
+                        SyntaxFactory.SeparatedList<ExpressionSyntax>(listWithSeparators)
+                    ),
+                AnonymousObjectCreationExpressionSyntax anonymousObjectCreationExpression
+                    => anonymousObjectCreationExpression.WithInitializers(
+                        SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(
+                            listWithSeparators
+                        )
+                    ),
+                _
+                    => throw new NotSupportedException(
+                        $"Unable to update children for syntax kind {node.Kind()}"
+                    )
+            };
         }
     }
 }

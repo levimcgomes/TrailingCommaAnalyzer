@@ -72,7 +72,7 @@ namespace TrailingCommaAnalyzer
             context.ReportDiagnostic(Diagnostic.Create(Rule, lastNode.GetLocation()));
         }
 
-        private SyntaxNodeOrTokenList GetSeparated(SyntaxNode node)
+        public static SyntaxNodeOrTokenList GetSeparated(SyntaxNode node)
         {
             return node switch
             {
