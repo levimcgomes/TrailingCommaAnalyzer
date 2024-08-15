@@ -24,7 +24,7 @@ namespace TrailingCommaAnalyzer
         private static readonly string Title = "Missing trailing comma.";
         private static readonly string MessageFormat = "Missing trailing comma.";
         private static readonly string Description = "Trailing commas should always be added.";
-        private const string Category = "Naming";
+        private const string Category = "Maintainability";
 
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             DiagnosticId,
