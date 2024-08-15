@@ -55,35 +55,45 @@ namespace TrailingCommaAnalyzer
         private void AnalyzeObjectInitializerExpression(SyntaxNodeAnalysisContext context)
         {
             var objectInitializerSyntax = (InitializerExpressionSyntax)context.Node;
+            var separated = objectInitializerSyntax.Expressions.GetWithSeparators();
+            if (separated.Count < 1)
+                return;
+            var lastItem = separated.Last();
+
+            // Exit early if there already is a trailing comma
+            if (lastItem.IsToken)
+                return;
+
+            var lastNode = lastItem.AsNode();
+            // Check if an added comma would be the last token on its line
+            if (!CommaWouldBeLastToken(lastNode))
+                return;
+
             var lastExpression = objectInitializerSyntax.Expressions.Last();
-            // If the last item doesn't have trailing newline trivia,
-            // then the initializer is a single-liner, which doesn't
-            // need a trailing comma
-            if (
-                !lastExpression.HasTrailingTrivia
-                || !lastExpression
-                    .GetTrailingTrivia()
-                    .Any(t => t.IsKind(SyntaxKind.EndOfLineTrivia))
-            )
-            {
-                return;
-            }
-
-            // The last token is always the closing brace, so check
-            // if the previous one is a comma or something else
-            if (
-                objectInitializerSyntax
-                    .ChildTokens()
-                    .Last()
-                    .GetPreviousToken()
-                    .IsKind(SyntaxKind.CommaToken)
-            )
-            {
-                return;
-            }
-
-            // There should be a trailing comma, so create a diagnostic
             context.ReportDiagnostic(Diagnostic.Create(Rule, lastExpression.GetLocation()));
+        }
+
+        private bool CommaWouldBeLastToken(SyntaxNode lastNode)
+        {
+            var lines = lastNode.SyntaxTree.GetText().Lines;
+            // Get the last token on this node
+            var lastTokenInNode = lastNode.DescendantTokens().Last();
+            // Get the next token
+            var nextToken = lastTokenInNode.GetNextToken();
+            // Check if it actually exists
+            if (nextToken == default)
+            {
+                return true;
+            }
+
+            // Get the lines of both tokens
+            var lineOfLastTokenInNode = lines
+                .GetLineFromPosition(lastTokenInNode.Span.End)
+                .LineNumber;
+            var lineOfNextToken = lines.GetLineFromPosition(nextToken.Span.Start).LineNumber;
+            // If the last token and the next token are on different lines,
+            // then an added comma would be the last token on its line
+            return lineOfLastTokenInNode != lineOfNextToken;
         }
     }
 }
