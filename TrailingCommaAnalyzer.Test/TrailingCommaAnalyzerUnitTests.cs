@@ -142,11 +142,11 @@ namespace TrailingCommaAnalyzer.Test
             {
                 tests +=
                     $"\tIn {testDir}:\n\t\t"
-                    + File.Exists(testDir + @"\Diagnostic.cs")
+                    + File.Exists(testDir + @"/Diagnostic.cs")
                     + '\t'
-                    + File.Exists(testDir + @"\NoDiagnostic.cs")
+                    + File.Exists(testDir + @"/NoDiagnostic.cs")
                     + '\t'
-                    + File.Exists(testDir + @"\Expected.cs")
+                    + File.Exists(testDir + @"/Expected.cs")
                     + '\n';
             }
             throw new Exception(
