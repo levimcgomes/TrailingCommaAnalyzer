@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace TrailingCommaAnalyzer.Test
 
         public static List<TestFileSet> _testFileSets;
 
+        public TestContext TestContext { get; set; }
+
         public static IEnumerable<object[]> GetTestData()
         {
             foreach (TestFileSet testFileSet in _testFileSets)
@@ -42,7 +45,13 @@ namespace TrailingCommaAnalyzer.Test
             var testsFolder = Directory.EnumerateDirectories(@"Tests");
             foreach (var testFiles in testsFolder)
             {
-                TestFileSet testFileSet = new TestFileSet { Name = testFiles };
+                TestFileSet testFileSet = new TestFileSet
+                {
+                    Name = testFiles,
+                    WithDiagnostic = "",
+                    WithoutDiagnostic = "",
+                    Expected = "",
+                };
                 if (File.Exists(testFiles + @"\Diagnostic.cs"))
                 {
                     testFileSet.WithDiagnostic = File.ReadAllText(testFiles + @"\Diagnostic.cs");
@@ -88,7 +97,7 @@ namespace TrailingCommaAnalyzer.Test
         public async Task DiagnosticFromFile(TestFileSet testFileSet)
         {
             if (testFileSet.WithDiagnostic.Length == 0)
-                return;
+                throw new ArgumentException("Missing test data", nameof(testFileSet));
             await VerifyCS.VerifyAnalyzerAsync(testFileSet.WithDiagnostic);
         }
 
@@ -101,7 +110,7 @@ namespace TrailingCommaAnalyzer.Test
         public async Task NoDiagnosticFromFile(TestFileSet testFileSet)
         {
             if (testFileSet.WithoutDiagnostic.Length == 0)
-                return;
+                throw new ArgumentException("Missing test data", nameof(testFileSet));
             await VerifyCS.VerifyAnalyzerAsync(testFileSet.WithoutDiagnostic);
         }
 
@@ -114,7 +123,7 @@ namespace TrailingCommaAnalyzer.Test
         public async Task FixFromFile(TestFileSet testFileSet)
         {
             if (testFileSet.WithDiagnostic.Length == 0 || testFileSet.Expected.Length == 0)
-                return;
+                throw new ArgumentException("Missing test data", nameof(testFileSet));
             await VerifyCS.VerifyCodeFixAsync(testFileSet.WithDiagnostic, testFileSet.Expected);
         }
     }
