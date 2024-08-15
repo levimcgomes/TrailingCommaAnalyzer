@@ -53,19 +53,19 @@ namespace TrailingCommaAnalyzer.Test
                     WithoutDiagnostic = "",
                     Expected = "",
                 };
-                if (File.Exists(testFiles + @"\Diagnostic.cs"))
+                if (File.Exists(testFiles + @"/Diagnostic.cs"))
                 {
-                    testFileSet.WithDiagnostic = File.ReadAllText(testFiles + @"\Diagnostic.cs");
+                    testFileSet.WithDiagnostic = File.ReadAllText(testFiles + @"/Diagnostic.cs");
                 }
-                if (File.Exists(testFiles + @"\NoDiagnostic.cs"))
+                if (File.Exists(testFiles + @"/NoDiagnostic.cs"))
                 {
                     testFileSet.WithoutDiagnostic = File.ReadAllText(
-                        testFiles + @"\NoDiagnostic.cs"
+                        testFiles + @"/NoDiagnostic.cs"
                     );
                 }
-                if (File.Exists(testFiles + @"\Expected.cs"))
+                if (File.Exists(testFiles + @"/Expected.cs"))
                 {
-                    testFileSet.Expected = File.ReadAllText(testFiles + @"\Expected.cs");
+                    testFileSet.Expected = File.ReadAllText(testFiles + @"/Expected.cs");
                 }
                 _testFileSets.Add(testFileSet);
             }
