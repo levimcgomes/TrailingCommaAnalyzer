@@ -2,6 +2,8 @@
 
 [![Build status](https://github.com/levimcgomes/TrailingCommaAnalyzer/actions/workflows/main.yml/badge.svg)](https://github.com/levimcgomes/TrailingCommaAnalyzer/actions/workflows/main.yml)
 
+> **This project is a WIP!**
+
 This is a C# code analyzer, based on the .NET Compiler SDK, which enforces the usage of trailing commas where they're allowed.
 
 ## Motivation
@@ -10,12 +12,13 @@ This is a C# code analyzer, based on the .NET Compiler SDK, which enforces the u
 
 ## Features
 
-Report missing trailing commas in:
+Report and fix missing trailing commas in:
 
-- [] object initializers
-- [] array initializers
-- [] collection initializers
-- [] enums
-- [] switch expressions
-
-Fix missing commas.
+- [x] object initializers
+- [ ] array initializers
+- [ ] collection initializers
+- [ ] anonymous objects
+- [ ] enum declarations
+- [ ] switch expressions
+- [ ] with initializers
+- [ ] object and list patterns
