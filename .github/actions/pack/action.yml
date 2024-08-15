@@ -12,9 +12,9 @@ runs:
       shell: bash
       run: dotnet pack -c CI -o ${{ inputs.output-dir }}
 
-    - name: Install nuget validator
+    - name: Restore tools
       shell: bash
-      run: dotnet tool update Meziantou.Framework.NuGetPackageValidation.Tool --global
+      run: dotnet tool restore
 
     - name: Validate package
       shell: bash
