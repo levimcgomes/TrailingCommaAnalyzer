@@ -1,6 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static TrailingCommaAnalyzer.Test.TrailingCommaAnalyzerUnitTest;
 using VerifyCS = TrailingCommaAnalyzer.Test.CSharpCodeFixVerifier<
     TrailingCommaAnalyzer.TrailingCommaAnalyzer,
     TrailingCommaAnalyzer.TrailingCommaAnalyzerCodeFixProvider
@@ -11,75 +17,105 @@ namespace TrailingCommaAnalyzer.Test
     [TestClass]
     public class TrailingCommaAnalyzerUnitTest
     {
-        private static readonly string TestPrelude =
-            @"namespace TrailingCommaAnalyzerTest
-{
-    internal class Program
-    {
-        struct MissingACommaStruct
+        public struct TestFileSet
         {
-            public int A;
-            public int B;
-            public int C;
+            public string Name;
+            public string WithDiagnostic;
+            public string WithoutDiagnostic;
+            public string Expected;
         }
 
-        static void Main(string[] args)
-        {";
-        private static readonly string TestClosing =
-            @"        }
-    }
-}
-";
+        public static List<TestFileSet> _testFileSets;
 
-        [TestMethod]
-        public async Task DiagnosticObjectInitializerExpression()
+        public static IEnumerable<object[]> GetTestData()
         {
-            var test =
-                TestPrelude
-                + @"var missingACommaStruct = new MissingACommaStruct
-{
-    A = 10,
-    B = 20,
-    C = 30
-};"
-                + TestClosing;
-            var expected = VerifyCS.Diagnostic("TCA001").WithSpan(17, 5, 17, 11);
-            await VerifyCS.VerifyAnalyzerAsync(test, expected);
+            foreach (TestFileSet testFileSet in _testFileSets)
+            {
+                yield return new object[] { testFileSet };
+            }
+        }
+
+        [ClassInitialize]
+        public static void GetTestFileSets(TestContext _)
+        {
+            _testFileSets = new List<TestFileSet>();
+            var testsFolder = Directory.EnumerateDirectories(@"Tests");
+            foreach (var testFiles in testsFolder)
+            {
+                TestFileSet testFileSet = new TestFileSet { Name = testFiles };
+                if (File.Exists(testFiles + @"\Diagnostic.cs"))
+                {
+                    testFileSet.WithDiagnostic = File.ReadAllText(testFiles + @"\Diagnostic.cs");
+                }
+                if (File.Exists(testFiles + @"\NoDiagnostic.cs"))
+                {
+                    testFileSet.WithoutDiagnostic = File.ReadAllText(
+                        testFiles + @"\NoDiagnostic.cs"
+                    );
+                }
+                if (File.Exists(testFiles + @"\Expected.cs"))
+                {
+                    testFileSet.Expected = File.ReadAllText(testFiles + @"\Expected.cs");
+                }
+                _testFileSets.Add(testFileSet);
+            }
+        }
+
+        public static string GetDisplayName(MethodInfo methodInfo, object[] values)
+        {
+            if (values[0] is TestFileSet testFileSet)
+            {
+                return methodInfo.Name switch
+                {
+                    nameof(DiagnosticFromFile) => $"With diagnostic on set {testFileSet.Name}",
+                    nameof(NoDiagnosticFromFile) => $"Without diagnostic on set {testFileSet.Name}",
+                    nameof(FixFromFile) => $"Fix on set {testFileSet.Name}",
+                    _ => "Unreachable",
+                };
+            }
+            else
+            {
+                return "Invalid data";
+            }
         }
 
         [TestMethod]
-        public async Task NoDiagnosticObjectInitializerExpression()
+        [DynamicData(
+            nameof(GetTestData),
+            DynamicDataSourceType.Method,
+            DynamicDataDisplayName = nameof(GetDisplayName)
+        )]
+        public async Task DiagnosticFromFile(TestFileSet testFileSet)
         {
-            var test =
-                TestPrelude
-                + @"var notMissingACommaStruct = new MissingACommaStruct { A = 10, B = 20 };"
-                + TestClosing;
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            if (testFileSet.WithDiagnostic.Length == 0)
+                return;
+            await VerifyCS.VerifyAnalyzerAsync(testFileSet.WithDiagnostic);
         }
 
         [TestMethod]
-        public async Task FixObjectInitializerExpression()
+        [DynamicData(
+            nameof(GetTestData),
+            DynamicDataSourceType.Method,
+            DynamicDataDisplayName = nameof(GetDisplayName)
+        )]
+        public async Task NoDiagnosticFromFile(TestFileSet testFileSet)
         {
-            var test =
-                TestPrelude
-                + @"var missingACommaStruct = new MissingACommaStruct
-{
-    A = 10,
-    B = 20,
-    C = 30
-};"
-                + TestClosing;
-            var expected = VerifyCS.Diagnostic("TCA001").WithSpan(17, 5, 17, 11);
-            var correct =
-                TestPrelude
-                + @"var missingACommaStruct = new MissingACommaStruct
-{
-    A = 10,
-    B = 20,
-    C = 30,
-};"
-                + TestClosing;
-            await VerifyCS.VerifyCodeFixAsync(test, expected, correct);
+            if (testFileSet.WithoutDiagnostic.Length == 0)
+                return;
+            await VerifyCS.VerifyAnalyzerAsync(testFileSet.WithoutDiagnostic);
+        }
+
+        [TestMethod]
+        [DynamicData(
+            nameof(GetTestData),
+            DynamicDataSourceType.Method,
+            DynamicDataDisplayName = nameof(GetDisplayName)
+        )]
+        public async Task FixFromFile(TestFileSet testFileSet)
+        {
+            if (testFileSet.WithDiagnostic.Length == 0 || testFileSet.Expected.Length == 0)
+                return;
+            await VerifyCS.VerifyCodeFixAsync(testFileSet.WithDiagnostic, testFileSet.Expected);
         }
     }
 }
