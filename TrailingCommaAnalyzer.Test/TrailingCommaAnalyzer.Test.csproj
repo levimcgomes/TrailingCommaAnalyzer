@@ -12,17 +12,14 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Compile Remove="Tests\AnonymousObjectCreationExpression\Diagnostic.cs" />
+    <Compile Remove="Tests\AnonymousObjectCreationExpression\Expected.cs" />
+    <Compile Remove="Tests\AnonymousObjectCreationExpression\NoDiagnostic.cs" />
     <Compile Remove="Tests\ObjectInitializerExpression\Diagnostic.cs" />
     <Compile Remove="Tests\ObjectInitializerExpression\Expected.cs" />
     <Compile Remove="Tests\ObjectInitializerExpression\NoDiagnostic.cs" />
   </ItemGroup>
   
-  <ItemGroup>
-    <None Include="Tests\ObjectInitializerExpression\Diagnostic.cs" />
-    <None Include="Tests\ObjectInitializerExpression\Expected.cs" />
-    <None Include="Tests\ObjectInitializerExpression\NoDiagnostic.cs" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="GitInfo" Version="3.3.5">
       <PrivateAssets>all</PrivateAssets>
