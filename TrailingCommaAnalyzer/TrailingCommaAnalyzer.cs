@@ -48,7 +48,8 @@ namespace TrailingCommaAnalyzer
 
             context.RegisterSyntaxNodeAction(
                 AnalyzeObjectInitializerExpression,
-                SyntaxKind.ObjectInitializerExpression
+                SyntaxKind.ObjectInitializerExpression,
+                SyntaxKind.AnonymousObjectCreationExpression
             );
         }
 
@@ -77,6 +78,8 @@ namespace TrailingCommaAnalyzer
             {
                 InitializerExpressionSyntax initializerExpression
                     => initializerExpression.Expressions.GetWithSeparators(),
+                AnonymousObjectCreationExpressionSyntax anonymousObjectCreationExpression
+                    => anonymousObjectCreationExpression.Initializers.GetWithSeparators(),
                 _
                     => throw new NotSupportedException(
                         $"Unable to get list with separators for syntax kind {node.Kind()}"
