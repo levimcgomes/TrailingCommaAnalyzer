@@ -10,7 +10,8 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace TrailingCommaAnalyzer
 {
@@ -45,53 +46,54 @@ namespace TrailingCommaAnalyzer
             var diagnostic = context.Diagnostics.First();
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            // Find the type declaration identified by the diagnostic.
+            // Find the initializer expression identified by the diagnostic.
             var declaration = root.FindToken(diagnosticSpan.Start)
                 .Parent.AncestorsAndSelf()
-                .OfType<TypeDeclarationSyntax>()
+                .OfType<InitializerExpressionSyntax>()
                 .First();
 
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: Title,
-                    createChangedSolution: c =>
-                        MakeUppercaseAsync(context.Document, declaration, c),
+                    createChangedDocument: c =>
+                        AddTrailingCommaAsync(context.Document, declaration, c),
                     equivalenceKey: Title
                 ),
                 diagnostic
             );
         }
 
-        private async Task<Solution> MakeUppercaseAsync(
+        private async Task<Document> AddTrailingCommaAsync(
             Document document,
-            TypeDeclarationSyntax typeDecl,
+            InitializerExpressionSyntax initializerExpression,
             CancellationToken cancellationToken
         )
         {
-            // Compute new uppercase name.
-            var identifierToken = typeDecl.Identifier;
-            var newName = identifierToken.Text.ToUpperInvariant();
-
-            // Get the symbol representing the type to be renamed.
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
-            var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
-
-            // Produce a new solution that has all references to that type renamed, including the declaration.
-            var originalSolution = document.Project.Solution;
-            var optionSet = originalSolution.Workspace.Options;
-            var newSolution = await Renamer
-                .RenameSymbolAsync(
-                    document.Project.Solution,
-                    typeSymbol,
-                    newName,
-                    optionSet,
-                    cancellationToken
-                )
-                .ConfigureAwait(false);
-
-            // Return the new solution with the now-uppercase type name.
-            return newSolution;
+            // Get the list with separators
+            var listWithSeparators = initializerExpression.Expressions.GetWithSeparators();
+            // Get the last item
+            var lastItem = listWithSeparators.Last();
+            // Create a comma token with the correct trivia
+            var commaToken = SyntaxFactory.Token(
+                leading: default,
+                SyntaxKind.CommaToken,
+                trailing: lastItem.GetTrailingTrivia()
+            );
+            // Insert it into the list
+            listWithSeparators = listWithSeparators.ReplaceRange(
+                lastItem,
+                ImmutableArray.Create(lastItem.WithTrailingTrivia(), commaToken)
+            );
+            // Recreate an initializer expression with the new list
+            var newInitializerExpression = initializerExpression
+                .WithExpressions(SyntaxFactory.SeparatedList<ExpressionSyntax>(listWithSeparators))
+                .WithAdditionalAnnotations(Formatter.Annotation);
+            // Replace it with a document editor
+            var documentEditor = await DocumentEditor.CreateAsync(document, cancellationToken);
+            documentEditor.ReplaceNode(initializerExpression, newInitializerExpression);
+            // Return the document
+            return documentEditor.GetChangedDocument();
         }
     }
 }
