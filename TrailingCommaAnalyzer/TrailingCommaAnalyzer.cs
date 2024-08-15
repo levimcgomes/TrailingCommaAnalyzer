@@ -54,8 +54,7 @@ namespace TrailingCommaAnalyzer
 
         private void AnalyzeObjectInitializerExpression(SyntaxNodeAnalysisContext context)
         {
-            var objectInitializerSyntax = (InitializerExpressionSyntax)context.Node;
-            var separated = objectInitializerSyntax.Expressions.GetWithSeparators();
+            var separated = GetSeparated(context.Node);
             if (separated.Count < 1)
                 return;
             var lastItem = separated.Last();
@@ -69,8 +68,20 @@ namespace TrailingCommaAnalyzer
             if (!CommaWouldBeLastToken(lastNode))
                 return;
 
-            var lastExpression = objectInitializerSyntax.Expressions.Last();
-            context.ReportDiagnostic(Diagnostic.Create(Rule, lastExpression.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Rule, lastNode.GetLocation()));
+        }
+
+        private SyntaxNodeOrTokenList GetSeparated(SyntaxNode node)
+        {
+            return node switch
+            {
+                InitializerExpressionSyntax initializerExpression
+                    => initializerExpression.Expressions.GetWithSeparators(),
+                _
+                    => throw new NotSupportedException(
+                        $"Unable to get list with separators for syntax kind {node.Kind()}"
+                    ),
+            };
         }
 
         private bool CommaWouldBeLastToken(SyntaxNode lastNode)
