@@ -14,6 +14,6 @@ runs:
     - name: Publish
       shell: bash
       run: |
-        for pkg in ${{ inputs.output-dir }}; do
+        for pkg in ${{ inputs.output-dir }}/*.nupkg; do
           dotnet nuget push $pkg --api-key "${{ inputs.nuget-key }}"  --source https://api.nuget.org/v3/index.json --skip-duplicate
         done
