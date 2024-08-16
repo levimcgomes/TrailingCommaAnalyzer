@@ -21,4 +21,4 @@ Report and fix missing trailing commas in:
 - [x] enum declarations
 - [x] switch expressions
 - [x] with initializers
-- [ ] object and list patterns
+- [x] object and list patterns

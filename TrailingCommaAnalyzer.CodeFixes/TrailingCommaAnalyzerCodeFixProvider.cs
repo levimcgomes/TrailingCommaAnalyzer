@@ -125,6 +125,10 @@ namespace TrailingCommaAnalyzer
                     => propertyPatternClause.WithSubpatterns(
                         SyntaxFactory.SeparatedList<SubpatternSyntax>(listWithSeparators)
                     ),
+                ListPatternSyntax listPattern
+                    => listPattern.WithPatterns(
+                        SyntaxFactory.SeparatedList<PatternSyntax>(listWithSeparators)
+                    ),
                 _
                     => throw new NotSupportedException(
                         $"Unable to update children for syntax kind {node.Kind()}"
