@@ -24,3 +24,22 @@ Report and fix missing trailing commas in:
 ## Usage
 
 Install using one of the methods described in [the package's NuGet page](https://www.nuget.org/packages/levimcgomes.TrailingCommaAnalyzer/) and enjoy!
+
+## Configuration
+
+The analyzer can be configured with an `.editorconfig` file. The available option are:
+ 
+- `dotnet_diagnostic.TCA001.trailing_comma_style`
+- `dotnet_diagnostic.TCA001.severity`
+
+### `trailing_comma_style`
+This option determines where trailing commas should be present. The allowed values are:
+
+- **`always`**: a trailing comma should always be used
+- **`never`**: a trailing comma should never be used (this effectively disables the analyzer).
+- **`end_of_line`**: a trailing comma should only be used if it is at a line ending.
+
+The default value is `end_of_line`, and it will be assumed if an invalid value is specified.
+
+### `severity`
+Please refer to [the official documentation](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-options#severity-level) for allowed values and their effects. The default value is `warning`
