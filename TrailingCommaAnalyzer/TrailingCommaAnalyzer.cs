@@ -15,6 +15,13 @@ namespace TrailingCommaAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class TrailingCommaAnalyzer : DiagnosticAnalyzer
     {
+        private enum TrailingCommaStyle
+        {
+            Never,
+            Always,
+            EndOfLine
+        };
+
         public const string DiagnosticId = "TCA001";
 
         // You can change these strings in the Resources.resx file. If you do not want your
@@ -69,6 +76,8 @@ namespace TrailingCommaAnalyzer
 
         private void AnalyzeObjectInitializerExpression(SyntaxNodeAnalysisContext context)
         {
+            (TrailingCommaStyle, DiagnosticSeverity) config = GetConfig(context);
+
             var separated = GetSeparated(context.Node);
             if (separated.Count < 1)
                 return;
@@ -84,6 +93,13 @@ namespace TrailingCommaAnalyzer
                 return;
 
             context.ReportDiagnostic(Diagnostic.Create(Rule, lastNode.GetLocation()));
+        }
+
+        private (TrailingCommaStyle, DiagnosticSeverity) GetConfig(
+            SyntaxNodeAnalysisContext context
+        )
+        {
+            throw new NotImplementedException();
         }
 
         public static SyntaxNodeOrTokenList GetSeparated(SyntaxNode node)
