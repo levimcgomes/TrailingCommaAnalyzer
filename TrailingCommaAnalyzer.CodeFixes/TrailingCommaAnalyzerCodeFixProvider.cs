@@ -113,6 +113,10 @@ namespace TrailingCommaAnalyzer
                     => collectionExpression.WithElements(
                         SyntaxFactory.SeparatedList<CollectionElementSyntax>(listWithSeparators)
                     ),
+                EnumDeclarationSyntax enumDeclaration
+                    => enumDeclaration.WithMembers(
+                        SyntaxFactory.SeparatedList<EnumMemberDeclarationSyntax>(listWithSeparators)
+                    ),
                 _
                     => throw new NotSupportedException(
                         $"Unable to update children for syntax kind {node.Kind()}"

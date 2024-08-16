@@ -53,8 +53,10 @@ namespace TrailingCommaAnalyzer
                 SyntaxKind.ArrayInitializerExpression,
                 // node is AnonymousObjectCreationExpressionSyntax
                 SyntaxKind.AnonymousObjectCreationExpression,
-                // node is
-                SyntaxKind.CollectionExpression
+                // node is CollectionExpressionSyntax
+                SyntaxKind.CollectionExpression,
+                // node is EnumDeclarationSyntax
+                SyntaxKind.EnumDeclaration
             );
         }
 
@@ -87,6 +89,8 @@ namespace TrailingCommaAnalyzer
                     => anonymousObjectCreationExpression.Initializers.GetWithSeparators(),
                 CollectionExpressionSyntax collectionExpression
                     => collectionExpression.Elements.GetWithSeparators(),
+                EnumDeclarationSyntax enumDeclaration
+                    => enumDeclaration.Members.GetWithSeparators(),
                 _
                     => throw new NotSupportedException(
                         $"Unable to get list with separators for syntax kind {node.Kind()}"
