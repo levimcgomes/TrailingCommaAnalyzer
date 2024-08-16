@@ -31,6 +31,7 @@ namespace TrailingCommaAnalyzer
         private static readonly string Title = "Missing trailing comma";
         private static readonly string MessageFormat = "Missing trailing comma";
         private static readonly string Description = "Trailing commas should always be added.";
+        private static readonly string StyleOptionName = "trailing_comma_style";
         private const string Category = "Maintainability";
 
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
@@ -95,11 +96,28 @@ namespace TrailingCommaAnalyzer
             context.ReportDiagnostic(Diagnostic.Create(Rule, lastNode.GetLocation()));
         }
 
-        private (TrailingCommaStyle, DiagnosticSeverity) GetConfig(
-            SyntaxNodeAnalysisContext context
-        )
+        private TrailingCommaStyle GetConfig(SyntaxNodeAnalysisContext context)
         {
-            throw new NotImplementedException();
+            var config = context.Options.AnalyzerConfigOptionsProvider.GetOptions(
+                context.FilterTree
+            );
+
+            config.TryGetValue(
+                $"dotnet_diagnostic.{DiagnosticId}.{StyleOptionName}",
+                out var styleOption
+            );
+
+            return string.IsNullOrEmpty(styleOption)
+                // Use EndOfLine as the default
+                ? TrailingCommaStyle.EndOfLine
+                : styleOption.ToLowerInvariant() switch
+        {
+                    "always" => TrailingCommaStyle.Always,
+                    "never" => TrailingCommaStyle.Never,
+                    "end_of_line" => TrailingCommaStyle.EndOfLine,
+                    // Unknown values return the default
+                    _ => TrailingCommaStyle.EndOfLine,
+                };
         }
 
         public static SyntaxNodeOrTokenList GetSeparated(SyntaxNode node)
