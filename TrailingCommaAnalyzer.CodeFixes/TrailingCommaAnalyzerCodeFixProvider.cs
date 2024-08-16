@@ -109,6 +109,10 @@ namespace TrailingCommaAnalyzer
                             listWithSeparators
                         )
                     ),
+                CollectionExpressionSyntax collectionExpression
+                    => collectionExpression.WithElements(
+                        SyntaxFactory.SeparatedList<CollectionElementSyntax>(listWithSeparators)
+                    ),
                 _
                     => throw new NotSupportedException(
                         $"Unable to update children for syntax kind {node.Kind()}"

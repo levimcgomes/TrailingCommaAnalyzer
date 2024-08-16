@@ -16,7 +16,7 @@ Report and fix missing trailing commas in:
 
 - [x] object initializers
 - [x] array initializers
-- [ ] collection initializers
+- [x] collection initializers
 - [x] anonymous objects
 - [ ] enum declarations
 - [ ] switch expressions

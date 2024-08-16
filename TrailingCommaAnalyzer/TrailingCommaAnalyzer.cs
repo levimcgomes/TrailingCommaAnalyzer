@@ -52,7 +52,9 @@ namespace TrailingCommaAnalyzer
                 SyntaxKind.ObjectInitializerExpression,
                 SyntaxKind.ArrayInitializerExpression,
                 // node is AnonymousObjectCreationExpressionSyntax
-                SyntaxKind.AnonymousObjectCreationExpression
+                SyntaxKind.AnonymousObjectCreationExpression,
+                // node is
+                SyntaxKind.CollectionExpression
             );
         }
 
@@ -83,6 +85,8 @@ namespace TrailingCommaAnalyzer
                     => initializerExpression.Expressions.GetWithSeparators(),
                 AnonymousObjectCreationExpressionSyntax anonymousObjectCreationExpression
                     => anonymousObjectCreationExpression.Initializers.GetWithSeparators(),
+                CollectionExpressionSyntax collectionExpression
+                    => collectionExpression.Elements.GetWithSeparators(),
                 _
                     => throw new NotSupportedException(
                         $"Unable to get list with separators for syntax kind {node.Kind()}"
