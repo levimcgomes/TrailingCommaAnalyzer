@@ -15,9 +15,9 @@ This is a C# code analyzer, based on the .NET Compiler SDK, which enforces the u
 Report and fix missing trailing commas in:
 
 - [x] object initializers
-- [ ] array initializers
+- [x] array initializers
 - [ ] collection initializers
-- [ ] anonymous objects
+- [x] anonymous objects
 - [ ] enum declarations
 - [ ] switch expressions
 - [ ] with initializers

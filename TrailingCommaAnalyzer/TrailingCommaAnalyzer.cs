@@ -48,7 +48,10 @@ namespace TrailingCommaAnalyzer
 
             context.RegisterSyntaxNodeAction(
                 AnalyzeObjectInitializerExpression,
+                // node is InitializerExpressionSyntax
                 SyntaxKind.ObjectInitializerExpression,
+                SyntaxKind.ArrayInitializerExpression,
+                // node is AnonymousObjectCreationExpressionSyntax
                 SyntaxKind.AnonymousObjectCreationExpression
             );
         }
