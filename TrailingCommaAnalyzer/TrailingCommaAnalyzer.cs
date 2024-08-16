@@ -59,7 +59,9 @@ namespace TrailingCommaAnalyzer
                 // node is EnumDeclarationSyntax
                 SyntaxKind.EnumDeclaration,
                 // node is SwitchExpressionSyntax
-                SyntaxKind.SwitchExpression
+                SyntaxKind.SwitchExpression,
+                // node is PropertyPatternClauseSyntax
+                SyntaxKind.PropertyPatternClause
             );
         }
 
@@ -96,6 +98,8 @@ namespace TrailingCommaAnalyzer
                     => enumDeclaration.Members.GetWithSeparators(),
                 SwitchExpressionSyntax switchExpression
                     => switchExpression.Arms.GetWithSeparators(),
+                PropertyPatternClauseSyntax propertyPatternClause
+                    => propertyPatternClause.Subpatterns.GetWithSeparators(),
                 _
                     => throw new NotSupportedException(
                         $"Unable to get list with separators for syntax kind {node.Kind()}"

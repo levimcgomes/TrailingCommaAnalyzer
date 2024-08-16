@@ -121,6 +121,10 @@ namespace TrailingCommaAnalyzer
                     => switchExpression.WithArms(
                         SyntaxFactory.SeparatedList<SwitchExpressionArmSyntax>(listWithSeparators)
                     ),
+                PropertyPatternClauseSyntax propertyPatternClause
+                    => propertyPatternClause.WithSubpatterns(
+                        SyntaxFactory.SeparatedList<SubpatternSyntax>(listWithSeparators)
+                    ),
                 _
                     => throw new NotSupportedException(
                         $"Unable to update children for syntax kind {node.Kind()}"
