@@ -26,7 +26,7 @@ namespace TrailingCommaAnalyzer.Test
             public string Expected;
         }
 
-        public static List<TestFileSet> _testFileSets;
+        private static List<TestFileSet> _testFileSets;
 
         public TestContext TestContext { get; set; }
 
