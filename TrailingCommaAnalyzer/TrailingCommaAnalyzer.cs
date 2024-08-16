@@ -21,8 +21,8 @@ namespace TrailingCommaAnalyzer
         // analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
         // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Localizing%20Analyzers.md
         // for more on localization
-        private static readonly string Title = "Missing trailing comma.";
-        private static readonly string MessageFormat = "Missing trailing comma.";
+        private static readonly string Title = "Missing trailing comma";
+        private static readonly string MessageFormat = "Missing trailing comma";
         private static readonly string Description = "Trailing commas should always be added.";
         private const string Category = "Maintainability";
 
