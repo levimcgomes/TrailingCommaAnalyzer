@@ -77,7 +77,10 @@ namespace TrailingCommaAnalyzer
 
         private void AnalyzeObjectInitializerExpression(SyntaxNodeAnalysisContext context)
         {
-            (TrailingCommaStyle, DiagnosticSeverity) config = GetConfig(context);
+            TrailingCommaStyle trailingCommaStyle = GetConfig(context);
+
+            if (trailingCommaStyle == TrailingCommaStyle.Never)
+                return;
 
             var separated = GetSeparated(context.Node);
             if (separated.Count < 1)
@@ -89,9 +92,15 @@ namespace TrailingCommaAnalyzer
                 return;
 
             var lastNode = lastItem.AsNode();
-            // Check if an added comma would be the last token on its line
-            if (!CommaWouldBeLastToken(lastNode))
+            // If trailing commas are only allowed at the endo fo lines,
+            // check if an added comma would be the last token on its line
+            if (
+                trailingCommaStyle == TrailingCommaStyle.EndOfLine
+                && !CommaWouldBeLastToken(lastNode)
+            )
+            {
                 return;
+            }
 
             context.ReportDiagnostic(Diagnostic.Create(Rule, lastNode.GetLocation()));
         }
@@ -111,7 +120,7 @@ namespace TrailingCommaAnalyzer
                 // Use EndOfLine as the default
                 ? TrailingCommaStyle.EndOfLine
                 : styleOption.ToLowerInvariant() switch
-        {
+                {
                     "always" => TrailingCommaStyle.Always,
                     "never" => TrailingCommaStyle.Never,
                     "end_of_line" => TrailingCommaStyle.EndOfLine,
