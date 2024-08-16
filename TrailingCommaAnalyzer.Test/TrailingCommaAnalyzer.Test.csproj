@@ -15,6 +15,9 @@
     <Compile Remove="Tests\AnonymousObjectCreationExpression\Diagnostic.cs" />
     <Compile Remove="Tests\AnonymousObjectCreationExpression\Expected.cs" />
     <Compile Remove="Tests\AnonymousObjectCreationExpression\NoDiagnostic.cs" />
+    <Compile Remove="Tests\ArrayInitializerExpression\Diagnostic.cs" />
+    <Compile Remove="Tests\ArrayInitializerExpression\Expected.cs" />
+    <Compile Remove="Tests\ArrayInitializerExpression\NoDiagnostic.cs" />
     <Compile Remove="Tests\ObjectInitializerExpression\Diagnostic.cs" />
     <Compile Remove="Tests\ObjectInitializerExpression\Expected.cs" />
     <Compile Remove="Tests\ObjectInitializerExpression\NoDiagnostic.cs" />
