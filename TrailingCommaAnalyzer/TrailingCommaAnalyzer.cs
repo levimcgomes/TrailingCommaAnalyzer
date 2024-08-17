@@ -60,6 +60,7 @@ namespace TrailingCommaAnalyzer
                 SyntaxKind.ObjectInitializerExpression,
                 SyntaxKind.ArrayInitializerExpression,
                 SyntaxKind.WithInitializerExpression,
+                SyntaxKind.CollectionInitializerExpression,
                 // node is AnonymousObjectCreationExpressionSyntax
                 SyntaxKind.AnonymousObjectCreationExpression,
                 // node is CollectionExpressionSyntax
